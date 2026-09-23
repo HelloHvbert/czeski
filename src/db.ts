@@ -58,6 +58,19 @@ export async function migrate(db: SQLiteDatabase) {
     version = 1;
     await db.execAsync(`PRAGMA user_version = ${version}`);
   }
+
+  if (version < 2) {
+    await db.execAsync(`
+      CREATE TABLE IF NOT EXISTS course_progress (
+        chapter_id TEXT PRIMARY KEY NOT NULL,
+        done INTEGER NOT NULL DEFAULT 0,
+        words_added INTEGER NOT NULL DEFAULT 0,
+        conversations INTEGER NOT NULL DEFAULT 0
+      );
+    `);
+    version = 2;
+    await db.execAsync(`PRAGMA user_version = ${version}`);
+  }
 }
 
 // ---------- ustawienia ----------
@@ -146,4 +159,24 @@ export async function recordFalseFriend(db: SQLiteDatabase, cz: string, ok: bool
 export async function getFalseFriendStats(db: SQLiteDatabase) {
   const rows = await db.getAllAsync<{ cz: string; correct: number; wrong: number }>('SELECT * FROM ff_stats');
   return Object.fromEntries(rows.map((r) => [r.cz, r]));
+}
+
+// ---------- kurs ----------
+
+export interface ChapterProgress { chapter_id: string; done: number; words_added: number; conversations: number }
+
+export async function getCourseProgress(db: SQLiteDatabase): Promise<Record<string, ChapterProgress>> {
+  const rows = await db.getAllAsync<ChapterProgress>('SELECT * FROM course_progress');
+  return Object.fromEntries(rows.map((r) => [r.chapter_id, r]));
+}
+
+export async function updateCourseProgress(
+  db: SQLiteDatabase,
+  chapterId: string,
+  patch: { done?: boolean; wordsAdded?: boolean; conversation?: boolean },
+) {
+  await db.runAsync('INSERT OR IGNORE INTO course_progress (chapter_id) VALUES (?)', chapterId);
+  if (patch.done !== undefined) await db.runAsync('UPDATE course_progress SET done = ? WHERE chapter_id = ?', patch.done ? 1 : 0, chapterId);
+  if (patch.wordsAdded) await db.runAsync('UPDATE course_progress SET words_added = 1 WHERE chapter_id = ?', chapterId);
+  if (patch.conversation) await db.runAsync('UPDATE course_progress SET conversations = conversations + 1 WHERE chapter_id = ?', chapterId);
 }

@@ -26,11 +26,22 @@ type ChatItem =
 let idCounter = 0;
 const nextId = () => String(++idCounter);
 
-export default function ChatScreen() {
-  const [scenario, setScenario] = useState<Scenario | null>(null);
+export default function ChatScreen({ pending, onPendingConsumed }: { pending?: Scenario | null; onPendingConsumed?: () => void }) {
+  const [scenario, setScenarioState] = useState<Scenario | null>(null);
+  const [session, setSession] = useState(0);
+  const setScenario = (s: Scenario | null) => { setScenarioState(s); setSession((n) => n + 1); };
+
+  // Start scenki z zakładki Kurs
+  useEffect(() => {
+    if (pending) {
+      stopSpeaking();
+      setScenario(pending);
+      onPendingConsumed?.();
+    }
+  }, [pending]);
 
   if (!scenario) return <ScenarioPicker onPick={setScenario} />;
-  return <Conversation scenario={scenario} onExit={() => { stopSpeaking(); setScenario(null); }} />;
+  return <Conversation key={session} scenario={scenario} onExit={() => { stopSpeaking(); setScenario(null); }} />;
 }
 
 // ---------------- wybór scenki ----------------

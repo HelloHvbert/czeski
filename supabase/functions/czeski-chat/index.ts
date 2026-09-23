@@ -120,7 +120,7 @@ Deno.serve(async (req) => {
   const level = LEVELS.includes(body?.level) ? body.level : 'A2';
   const scenario = {
     title: String(body?.scenario?.title ?? 'Rozmowa').slice(0, 100),
-    prompt: String(body?.scenario?.prompt ?? 'Free conversation.').slice(0, 1500),
+    prompt: String(body?.scenario?.prompt ?? 'Free conversation.').slice(0, 3000),
   };
   const messages = sanitize(body?.messages);
 

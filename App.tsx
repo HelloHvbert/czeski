@@ -9,11 +9,15 @@ import ChatScreen from './src/screens/ChatScreen';
 import ReviewScreen from './src/screens/ReviewScreen';
 import FalseFriendsScreen from './src/screens/FalseFriendsScreen';
 import SettingsScreen from './src/screens/SettingsScreen';
+import CourseScreen from './src/screens/CourseScreen';
+import { chapterScenario } from './src/data/course';
+import type { Scenario } from './src/data/scenarios';
 import { colors } from './src/theme';
 
-type Tab = 'chat' | 'review' | 'ff' | 'settings';
+type Tab = 'course' | 'chat' | 'review' | 'ff' | 'settings';
 
 const TABS: { key: Tab; icon: string; label: string }[] = [
+  { key: 'course', icon: '📚', label: 'Kurs' },
   { key: 'chat', icon: '💬', label: 'Rozmowa' },
   { key: 'review', icon: '🃏', label: 'Powtórki' },
   { key: 'ff', icon: '⚠️', label: 'Pułapki' },
@@ -35,13 +39,19 @@ export default function App() {
 // Stan zakładek musi żyć POD SQLiteProviderem: jego memo ignoruje zmiany children,
 // więc stan trzymany wyżej nie przerenderowałby ekranów.
 function Main() {
-  const [tab, setTab] = useState<Tab>('chat');
+  const [tab, setTab] = useState<Tab>('course');
+  const [pending, setPending] = useState<Scenario | null>(null);
 
   return (
     <SafeAreaView style={styles.root} edges={['top', 'bottom']}>
       <StatusBar style="dark" />
       {/* Ekrany zostają zamontowane, żeby rozmowa nie znikała przy zmianie zakładki */}
-      <View style={[styles.screen, tab !== 'chat' && styles.hidden]}><ChatScreen /></View>
+      <View style={[styles.screen, tab !== 'course' && styles.hidden]}>
+        <CourseScreen onPractice={(ch) => { setPending(chapterScenario(ch)); setTab('chat'); }} />
+      </View>
+      <View style={[styles.screen, tab !== 'chat' && styles.hidden]}>
+        <ChatScreen pending={pending} onPendingConsumed={() => setPending(null)} />
+      </View>
       <View style={[styles.screen, tab !== 'review' && styles.hidden]}><ReviewScreen active={tab === 'review'} /></View>
       {tab === 'ff' && <View style={styles.screen}><FalseFriendsScreen /></View>}
       {tab === 'settings' && <View style={styles.screen}><SettingsScreen /></View>}
