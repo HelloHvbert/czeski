@@ -26,7 +26,7 @@ const DEFAULTS: Settings = {
   appSecret: process.env.EXPO_PUBLIC_APP_SECRET ?? '',
   level: 'A2',
   autoSpeak: true,
-  speechRate: 0.9,
+  speechRate: 0.85,
 };
 
 export async function migrate(db: SQLiteDatabase) {

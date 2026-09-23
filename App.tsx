@@ -21,32 +21,40 @@ const TABS: { key: Tab; icon: string; label: string }[] = [
 ];
 
 export default function App() {
-  const [tab, setTab] = useState<Tab>('chat');
-
   return (
     <SafeAreaProvider>
       <SQLiteProvider databaseName="czeski.db" onInit={migrate}>
         <SettingsProvider>
-          <SafeAreaView style={styles.root} edges={['top', 'bottom']}>
-            <StatusBar style="dark" />
-            {/* Ekrany zostają zamontowane, żeby rozmowa nie znikała przy zmianie zakładki */}
-            <View style={[styles.screen, tab !== 'chat' && styles.hidden]}><ChatScreen /></View>
-            <View style={[styles.screen, tab !== 'review' && styles.hidden]}><ReviewScreen active={tab === 'review'} /></View>
-            {tab === 'ff' && <View style={styles.screen}><FalseFriendsScreen /></View>}
-            {tab === 'settings' && <View style={styles.screen}><SettingsScreen /></View>}
-
-            <View style={styles.tabBar}>
-              {TABS.map((t) => (
-                <Pressable key={t.key} onPress={() => setTab(t.key)} style={styles.tab}>
-                  <Text style={[styles.tabIcon, tab !== t.key && { opacity: 0.45 }]}>{t.icon}</Text>
-                  <Text style={[styles.tabLabel, tab === t.key && styles.tabLabelActive]}>{t.label}</Text>
-                </Pressable>
-              ))}
-            </View>
-          </SafeAreaView>
+          <Main />
         </SettingsProvider>
       </SQLiteProvider>
     </SafeAreaProvider>
+  );
+}
+
+// Stan zakładek musi żyć POD SQLiteProviderem: jego memo ignoruje zmiany children,
+// więc stan trzymany wyżej nie przerenderowałby ekranów.
+function Main() {
+  const [tab, setTab] = useState<Tab>('chat');
+
+  return (
+    <SafeAreaView style={styles.root} edges={['top', 'bottom']}>
+      <StatusBar style="dark" />
+      {/* Ekrany zostają zamontowane, żeby rozmowa nie znikała przy zmianie zakładki */}
+      <View style={[styles.screen, tab !== 'chat' && styles.hidden]}><ChatScreen /></View>
+      <View style={[styles.screen, tab !== 'review' && styles.hidden]}><ReviewScreen active={tab === 'review'} /></View>
+      {tab === 'ff' && <View style={styles.screen}><FalseFriendsScreen /></View>}
+      {tab === 'settings' && <View style={styles.screen}><SettingsScreen /></View>}
+
+      <View style={styles.tabBar}>
+        {TABS.map((t) => (
+          <Pressable key={t.key} onPress={() => setTab(t.key)} style={styles.tab}>
+            <Text style={[styles.tabIcon, tab !== t.key && { opacity: 0.45 }]}>{t.icon}</Text>
+            <Text style={[styles.tabLabel, tab === t.key && styles.tabLabelActive]}>{t.label}</Text>
+          </Pressable>
+        ))}
+      </View>
+    </SafeAreaView>
   );
 }
 

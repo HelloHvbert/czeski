@@ -182,7 +182,7 @@ function Conversation({ scenario, onExit }: { scenario: Scenario; onExit: () => 
         onContentSizeChange={() => listRef.current?.scrollToEnd({ animated: true })}
         renderItem={({ item }) =>
           item.role === 'assistant' ? (
-            <AssistantBubble item={item} rate={settings?.speechRate ?? 0.9} />
+            <AssistantBubble item={item} rate={settings?.speechRate ?? 0.85} />
           ) : (
             <UserBubble item={item} onAdd={(c) => addWord(db, { cz: c.corrected, pl: c.explanation_pl, source: 'poprawka' })} />
           )
@@ -203,7 +203,7 @@ function Conversation({ scenario, onExit }: { scenario: Scenario; onExit: () => 
       />
 
       {suggestions.length > 0 && (
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.suggestRow} contentContainerStyle={{ gap: 8, paddingHorizontal: 12 }}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.suggestRow} contentContainerStyle={{ gap: 8, paddingHorizontal: 12, paddingVertical: 8, alignItems: 'center' }}>
           {suggestions.map((s, i) => (
             <Pressable key={i} onPress={() => setInput(s)} style={styles.suggestChip}>
               <Text style={styles.suggestText}>{s}</Text>
@@ -345,7 +345,7 @@ const styles = StyleSheet.create({
   errorText: { color: colors.accent, fontSize: 14 },
   retry: { color: colors.accent, fontWeight: '700', marginTop: 6 },
 
-  suggestRow: { flexGrow: 0, paddingVertical: 6 },
+  suggestRow: { flexGrow: 0, flexShrink: 0 },
   suggestChip: { backgroundColor: colors.card, borderWidth: 1, borderColor: colors.primary, borderRadius: 18, paddingHorizontal: 12, paddingVertical: 7 },
   suggestText: { color: colors.primary, fontSize: 14 },
 

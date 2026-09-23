@@ -4,7 +4,7 @@ import { ExpoSpeechRecognitionModule, useSpeechRecognitionEvent } from 'expo-spe
 
 const LANG = 'cs-CZ';
 
-export function speak(text: string, rate = 0.9) {
+export function speak(text: string, rate = 0.85) {
   Speech.stop();
   Speech.speak(text, { language: LANG, rate });
 }

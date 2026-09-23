@@ -17,7 +17,7 @@ const GRADES: { grade: Grade; label: string; color: string }[] = [
 export default function ReviewScreen({ active }: { active: boolean }) {
   const db = useSQLiteContext();
   const { settings } = useSettings();
-  const rate = settings?.speechRate ?? 0.9;
+  const rate = settings?.speechRate ?? 0.85;
   const [queue, setQueue] = useState<Card[]>([]);
   const [revealed, setRevealed] = useState(false);
   const [stats, setStats] = useState({ words: 0, due: 0, learned: 0 });
