@@ -10,15 +10,17 @@ import ReviewScreen from './src/screens/ReviewScreen';
 import FalseFriendsScreen from './src/screens/FalseFriendsScreen';
 import SettingsScreen from './src/screens/SettingsScreen';
 import CourseScreen from './src/screens/CourseScreen';
+import FreestyleScreen from './src/screens/FreestyleScreen';
 import { chapterScenario } from './src/data/course';
 import type { Scenario } from './src/data/scenarios';
 import { colors } from './src/theme';
 
-type Tab = 'course' | 'chat' | 'review' | 'ff' | 'settings';
+type Tab = 'course' | 'chat' | 'free' | 'review' | 'ff' | 'settings';
 
 const TABS: { key: Tab; icon: string; label: string }[] = [
   { key: 'course', icon: '📚', label: 'Kurs' },
-  { key: 'chat', icon: '💬', label: 'Rozmowa' },
+  { key: 'chat', icon: '🎭', label: 'Scenki' },
+  { key: 'free', icon: '🗣️', label: 'Luźno' },
   { key: 'review', icon: '🃏', label: 'Powtórki' },
   { key: 'ff', icon: '⚠️', label: 'Pułapki' },
   { key: 'settings', icon: '⚙️', label: 'Ustawienia' },
@@ -41,6 +43,9 @@ export default function App() {
 function Main() {
   const [tab, setTab] = useState<Tab>('course');
   const [pending, setPending] = useState<Scenario | null>(null);
+  // Luźna rozmowa montuje się dopiero przy pierwszym wejściu (żeby nie wołać API na starcie)
+  const [freeVisited, setFreeVisited] = useState(false);
+  const go = (t: Tab) => { if (t === 'free') setFreeVisited(true); setTab(t); };
 
   return (
     <SafeAreaView style={styles.root} edges={['top', 'bottom']}>
@@ -52,13 +57,18 @@ function Main() {
       <View style={[styles.screen, tab !== 'chat' && styles.hidden]}>
         <ChatScreen pending={pending} onPendingConsumed={() => setPending(null)} />
       </View>
+      {freeVisited && (
+        <View style={[styles.screen, tab !== 'free' && styles.hidden]}>
+          <FreestyleScreen />
+        </View>
+      )}
       <View style={[styles.screen, tab !== 'review' && styles.hidden]}><ReviewScreen active={tab === 'review'} /></View>
       {tab === 'ff' && <View style={styles.screen}><FalseFriendsScreen /></View>}
       {tab === 'settings' && <View style={styles.screen}><SettingsScreen /></View>}
 
       <View style={styles.tabBar}>
         {TABS.map((t) => (
-          <Pressable key={t.key} onPress={() => setTab(t.key)} style={styles.tab}>
+          <Pressable key={t.key} onPress={() => go(t.key)} style={styles.tab}>
             <Text style={[styles.tabIcon, tab !== t.key && { opacity: 0.45 }]}>{t.icon}</Text>
             <Text style={[styles.tabLabel, tab === t.key && styles.tabLabelActive]}>{t.label}</Text>
           </Pressable>
@@ -75,6 +85,6 @@ const styles = StyleSheet.create({
   tabBar: { flexDirection: 'row', borderTopWidth: 1, borderTopColor: colors.border, backgroundColor: colors.card, paddingTop: 6, paddingBottom: 4 },
   tab: { flex: 1, alignItems: 'center', paddingVertical: 4 },
   tabIcon: { fontSize: 20 },
-  tabLabel: { fontSize: 11, color: colors.muted, marginTop: 2 },
+  tabLabel: { fontSize: 10.5, color: colors.muted, marginTop: 2 },
   tabLabelActive: { color: colors.primary, fontWeight: '700' },
 });

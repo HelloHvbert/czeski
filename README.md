@@ -7,7 +7,8 @@ Aplikacja na Androida (Expo / React Native) plus jedna funkcja Supabase, która 
 | Zakładka | Co robi |
 |---|---|
 | 📚 **Kurs** | 12 rozdziałów A1→B1 (plan w `PLAN.md`). Każdy ma temat, gramatykę z przykładami do odsłuchania, pułapki dla Polaka i 10 słówek startowych. Przycisk „Ćwicz rozmowę” odpala scenkę, w której model celowo wymusza gramatykę z rozdziału i szczególnie jej pilnuje. |
-| 💬 **Rozmowa** | Scenki (hospoda, dworzec, sklep, apteka, kolega z IT…) albo własna sytuacja. Mówisz do mikrofonu lub piszesz. Model odpowiada w roli i czyta odpowiedź na głos. Pod Twoją wiadomością pojawiają się poprawki z wyjaśnieniem po polsku, a nad polem tekstowym dwie podpowiedzi, co możesz odpowiedzieć. Nowe słówka same trafiają do powtórek. |
+| 🎭 **Scenki** | Scenki (hospoda, dworzec, sklep, apteka, kolega z IT…) albo własna sytuacja. Mówisz do mikrofonu lub piszesz. Model odpowiada w roli i czyta odpowiedź na głos. Pod Twoją wiadomością pojawiają się poprawki z wyjaśnieniem po polsku, a nad polem tekstowym dwie podpowiedzi, co możesz odpowiedzieć. Nowe słówka same trafiają do powtórek. |
+| 🗣️ **Luźno** | Swobodna rozmowa bez scenki z „Honzą”, Czechem z Brna: o czymkolwiek, jak z kumplem. Możesz też wtrącać pytania o język. Poprawki i słówka działają jak w scenkach. „Nowa” zaczyna od zera, a krótsza historia jest tańsza. |
 | 🃏 **Powtórki** | Fiszki SM-2 (jak w Anki), w obu kierunkach: CZ→PL (rozumienie) i PL→CZ (mówienie, pojawia się dzień później). Masz też listę słówek, ręczne dodawanie i usuwanie przez przytrzymanie. |
 | ⚠️ **Pułapki** | Quiz z ok. 35 fałszywych przyjaciół (čerstvý, sklep, páchnout, právě, zápach…). Jedna z odpowiedzi to zawsze „polska pułapka”. Pomyłki lądują w powtórkach i wracają częściej. |
 | ⚙️ **Ustawienia** | Adres funkcji i sekret, poziom A1–B2, tempo mowy, automatyczne czytanie odpowiedzi. |

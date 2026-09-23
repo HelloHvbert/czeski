@@ -52,7 +52,7 @@ function ScenarioPicker({ onPick }: { onPick: (s: Scenario) => void }) {
 
   return (
     <ScrollView contentContainerStyle={styles.pickerWrap} keyboardShouldPersistTaps="handled">
-      <Text style={styles.h1}>Rozmowa</Text>
+      <Text style={styles.h1}>Scenki</Text>
       <Text style={styles.muted}>Wybierz scenkę. Model gra rolę, a pod Twoimi wiadomościami pojawiają się poprawki.</Text>
 
       <View style={styles.levelRow}>
@@ -97,7 +97,7 @@ function ScenarioPicker({ onPick }: { onPick: (s: Scenario) => void }) {
 
 // ---------------- rozmowa ----------------
 
-function Conversation({ scenario, onExit }: { scenario: Scenario; onExit: () => void }) {
+export function Conversation({ scenario, onExit, exitLabel = 'Zakończ' }: { scenario: Scenario; onExit: () => void; exitLabel?: string }) {
   const db = useSQLiteContext();
   const { settings } = useSettings();
   const [items, setItems] = useState<ChatItem[]>([]);
@@ -181,7 +181,7 @@ function Conversation({ scenario, onExit }: { scenario: Scenario; onExit: () => 
         <Text style={styles.headerTitle} numberOfLines={1}>{scenario.emoji} {scenario.title}</Text>
         {sessionWords > 0 && <Text style={styles.headerBadge}>+{sessionWords} słówek</Text>}
         <Pressable onPress={onExit} hitSlop={10}>
-          <Text style={styles.headerExit}>Zakończ</Text>
+          <Text style={styles.headerExit}>{exitLabel}</Text>
         </Pressable>
       </View>
 
