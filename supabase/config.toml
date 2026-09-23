@@ -1,0 +1,4 @@
+# Minimalna konfiguracja. Funkcja sama sprawdza nagłówek x-app-secret,
+# więc weryfikacja JWT Supabase jest wyłączona.
+[functions.czeski-chat]
+verify_jwt = false
