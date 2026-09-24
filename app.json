@@ -7,7 +7,11 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSSpeechRecognitionUsageDescription": "Aplikacja rozpoznaje Twoją mowę po czesku.",
+        "NSMicrophoneUsageDescription": "Aplikacja używa mikrofonu do rozmów po czesku."
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -17,7 +21,10 @@
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "pl.hubert.czeski"
+      "package": "pl.hubert.czeski",
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -34,6 +41,12 @@
           ]
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "97dbf34c-afe4-4247-920e-e627f5c8fced"
+      }
+    },
+    "owner": "hellohvbert"
   }
 }
