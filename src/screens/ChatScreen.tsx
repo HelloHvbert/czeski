@@ -176,7 +176,7 @@ export function Conversation({ scenario, onExit, exitLabel = 'Zakończ' }: { sce
     : [];
 
   return (
-    <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined} keyboardVerticalOffset={80}>
+    <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} keyboardVerticalOffset={Platform.OS === 'ios' ? 80 : 0}>
       <View style={styles.header}>
         <Text style={styles.headerTitle} numberOfLines={1}>{scenario.emoji} {scenario.title}</Text>
         {sessionWords > 0 && <Text style={styles.headerBadge}>+{sessionWords} słówek</Text>}
