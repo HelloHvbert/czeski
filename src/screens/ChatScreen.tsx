@@ -2,8 +2,6 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   FlatList,
-  KeyboardAvoidingView,
-  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -11,6 +9,7 @@ import {
   TextInput,
   View,
 } from 'react-native';
+import { KeyboardStickyView } from 'react-native-keyboard-controller';
 import { useSQLiteContext } from 'expo-sqlite';
 import { askTutor, type ApiMessage, type Correction, type NewWord } from '../api';
 import { addWord } from '../db';
@@ -176,7 +175,7 @@ export function Conversation({ scenario, onExit, exitLabel = 'Zakończ' }: { sce
     : [];
 
   return (
-    <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} keyboardVerticalOffset={Platform.OS === 'ios' ? 80 : 0}>
+    <View style={{ flex: 1 }}>
       <View style={styles.header}>
         <Text style={styles.headerTitle} numberOfLines={1}>{scenario.emoji} {scenario.title}</Text>
         {sessionWords > 0 && <Text style={styles.headerBadge}>+{sessionWords} słówek</Text>}
@@ -213,42 +212,44 @@ export function Conversation({ scenario, onExit, exitLabel = 'Zakończ' }: { sce
         }
       />
 
-      {suggestions.length > 0 && (
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.suggestRow} contentContainerStyle={{ gap: 8, paddingHorizontal: 12, paddingVertical: 8, alignItems: 'center' }}>
-          {suggestions.map((s, i) => (
-            <Pressable key={i} onPress={() => setInput(s)} style={styles.suggestChip}>
-              <Text style={styles.suggestText}>{s}</Text>
-            </Pressable>
-          ))}
-        </ScrollView>
-      )}
+      <KeyboardStickyView offset={{ closed: 0, opened: 0 }}>
+        {suggestions.length > 0 && (
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.suggestRow} contentContainerStyle={{ gap: 8, paddingHorizontal: 12, paddingVertical: 8, alignItems: 'center' }}>
+            {suggestions.map((s, i) => (
+              <Pressable key={i} onPress={() => setInput(s)} style={styles.suggestChip}>
+                <Text style={styles.suggestText}>{s}</Text>
+              </Pressable>
+            ))}
+          </ScrollView>
+        )}
 
-      {dictation.error && (
-        <Pressable onPress={dictation.clearError} style={[styles.errorBox, { marginHorizontal: 12 }]}>
-          <Text style={styles.errorText}>{dictation.error}</Text>
-        </Pressable>
-      )}
+        {dictation.error && (
+          <Pressable onPress={dictation.clearError} style={[styles.errorBox, { marginHorizontal: 12 }]}>
+            <Text style={styles.errorText}>{dictation.error}</Text>
+          </Pressable>
+        )}
 
-      <View style={styles.inputRow}>
-        <Pressable
-          onPress={dictation.listening ? dictation.stop : dictation.start}
-          style={[styles.micBtn, dictation.listening && styles.micBtnActive]}
-        >
-          <Text style={styles.micText}>{dictation.listening ? '■' : '🎤'}</Text>
-        </Pressable>
-        <TextInput
-          value={input}
-          onChangeText={setInput}
-          placeholder={dictation.listening ? 'Słucham…' : 'Napisz lub powiedz po czesku'}
-          placeholderTextColor={colors.muted}
-          style={[styles.input, { flex: 1, maxHeight: 110 }]}
-          multiline
-        />
-        <Pressable onPress={() => send(input)} disabled={!input.trim() || loading} style={[styles.sendBtn, (!input.trim() || loading) && { opacity: 0.4 }]}>
-          <Text style={styles.sendText}>➤</Text>
-        </Pressable>
-      </View>
-    </KeyboardAvoidingView>
+        <View style={styles.inputRow}>
+          <Pressable
+            onPress={dictation.listening ? dictation.stop : dictation.start}
+            style={[styles.micBtn, dictation.listening && styles.micBtnActive]}
+          >
+            <Text style={styles.micText}>{dictation.listening ? '■' : '🎤'}</Text>
+          </Pressable>
+          <TextInput
+            value={input}
+            onChangeText={setInput}
+            placeholder={dictation.listening ? 'Słucham…' : 'Napisz lub powiedz po czesku'}
+            placeholderTextColor={colors.muted}
+            style={[styles.input, { flex: 1, maxHeight: 110 }]}
+            multiline
+          />
+          <Pressable onPress={() => send(input)} disabled={!input.trim() || loading} style={[styles.sendBtn, (!input.trim() || loading) && { opacity: 0.4 }]}>
+            <Text style={styles.sendText}>➤</Text>
+          </Pressable>
+        </View>
+      </KeyboardStickyView>
+    </View>
   );
 }
 

@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaProvider, SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { KeyboardProvider, useKeyboardState } from 'react-native-keyboard-controller';
 import { SQLiteProvider } from 'expo-sqlite';
 import { migrate } from './src/db';
 import { SettingsProvider } from './src/SettingsContext';
@@ -28,13 +29,15 @@ const TABS: { key: Tab; icon: string; label: string }[] = [
 
 export default function App() {
   return (
-    <SafeAreaProvider>
-      <SQLiteProvider databaseName="czeski.db" onInit={migrate}>
-        <SettingsProvider>
-          <Main />
-        </SettingsProvider>
-      </SQLiteProvider>
-    </SafeAreaProvider>
+    <KeyboardProvider>
+      <SafeAreaProvider>
+        <SQLiteProvider databaseName="czeski.db" onInit={migrate}>
+          <SettingsProvider>
+            <Main />
+          </SettingsProvider>
+        </SQLiteProvider>
+      </SafeAreaProvider>
+    </KeyboardProvider>
   );
 }
 
@@ -46,9 +49,13 @@ function Main() {
   // Luźna rozmowa montuje się dopiero przy pierwszym wejściu (żeby nie wołać API na starcie)
   const [freeVisited, setFreeVisited] = useState(false);
   const go = (t: Tab) => { if (t === 'free') setFreeVisited(true); setTab(t); };
+  // Pasek zakładek chowamy przy otwartej klawiaturze: inaczej zostaje w layoucie pod nią
+  // i KeyboardStickyView w ChatScreen/FreestyleScreen dolicza jego wysokość jako szparę.
+  const keyboardVisible = useKeyboardState((s) => s.isVisible);
+  const insets = useSafeAreaInsets();
 
   return (
-    <SafeAreaView style={styles.root} edges={['top', 'bottom']}>
+    <SafeAreaView style={styles.root} edges={['top']}>
       <StatusBar style="dark" />
       {/* Ekrany zostają zamontowane, żeby rozmowa nie znikała przy zmianie zakładki */}
       <View style={[styles.screen, tab !== 'course' && styles.hidden]}>
@@ -66,7 +73,7 @@ function Main() {
       {tab === 'ff' && <View style={styles.screen}><FalseFriendsScreen /></View>}
       {tab === 'settings' && <View style={styles.screen}><SettingsScreen /></View>}
 
-      <View style={styles.tabBar}>
+      <View style={[styles.tabBar, { paddingBottom: 4 + insets.bottom }, keyboardVisible && styles.hidden]}>
         {TABS.map((t) => (
           <Pressable key={t.key} onPress={() => go(t.key)} style={styles.tab}>
             <Text style={[styles.tabIcon, tab !== t.key && { opacity: 0.45 }]}>{t.icon}</Text>
@@ -82,7 +89,7 @@ const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: colors.bg },
   screen: { flex: 1 },
   hidden: { display: 'none' },
-  tabBar: { flexDirection: 'row', borderTopWidth: 1, borderTopColor: colors.border, backgroundColor: colors.card, paddingTop: 6, paddingBottom: 4 },
+  tabBar: { flexDirection: 'row', borderTopWidth: 1, borderTopColor: colors.border, backgroundColor: colors.card, paddingTop: 6 },
   tab: { flex: 1, alignItems: 'center', paddingVertical: 4 },
   tabIcon: { fontSize: 20 },
   tabLabel: { fontSize: 10.5, color: colors.muted, marginTop: 2 },
