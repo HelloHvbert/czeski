@@ -154,7 +154,6 @@ Deno.serve(async (req) => {
     body: JSON.stringify({
       model: MODEL,
       max_tokens: 1000,
-      temperature: 0.7,
       system: [{ type: 'text', text: systemPrompt(level, scenario), cache_control: { type: 'ephemeral' } }],
       tools: [TOOL],
       tool_choice: { type: 'tool', name: TOOL.name },
